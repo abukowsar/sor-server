@@ -8,6 +8,7 @@ import userRouter from "./routes/userRouter.js";
 import planRouter from "./routes/subscriptionPlanRoutes.js";
 import quizRouter from "./routes/quizRoutes.js";
 import noticeRouter from "./routes/noticeRoutes.js";
+import olympiadRouter from "./routes/olympiadRoutes.js";
 
 dotenv.config();
 
@@ -26,6 +27,9 @@ app.use("/api/book", bookRouter);
 app.use("/api/plan", planRouter);
 app.use("/api/quiz", quizRouter);
 app.use("/api/notice", noticeRouter)
+
+
+app.use("/api/olympiad", olympiadRouter)
 
 
 app.get("/", async (req, res) => {
