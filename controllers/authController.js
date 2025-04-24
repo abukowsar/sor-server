@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/User/userModel.js";
 import { OTP } from "../models/otpModel.js";
 import { TempUser } from "../models/tempUserModel.js";
-import { sendSMS } from "../utils/sendSMS.js";
+import { sendSMS } from "../utils/sendSmsService.js";
 
 // Register a new user
 export const registerUser = async (req, res) => {
