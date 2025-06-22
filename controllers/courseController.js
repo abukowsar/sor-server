@@ -92,3 +92,70 @@ export const getAllBooks = async (req, res) => {
     });
   }
 };
+
+
+
+//update 
+
+export const updateCourse = async(req ,res)=>{
+  try {
+    const { courseId, title, description, image, tutor, plan } = req.body;
+
+    if (!courseId) {
+      return res.status(400).json({ message: " course id is required " });
+    }
+
+
+    const updatedCourse = await Course.findByIdAndUpdate(
+      courseId,
+      { title, description, image, tutor, plan },
+      { new: true }
+    );
+
+    if (!updatedCourse) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Course updated successfully",
+      data: updatedCourse
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update course",
+      error
+    });
+  }
+}
+
+
+// delete  
+export const deleteCourse = async(req , res)=>{
+  try {
+    const { courseId } = req.params ;
+    console.log(courseId, "courseId");
+
+    if (!courseId) {
+      return res.status(400).json({ message: "Course ID is required" });
+    }
+
+    const deletedCourse = await Course.findByIdAndDelete(courseId);
+
+    if (!deletedCourse) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Course deleted successfully"
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete course",
+      error
+    });
+  }
+}
