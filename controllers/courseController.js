@@ -276,3 +276,78 @@ export const getModule = async (req, res) => {
     });
   }
 };
+
+
+
+ 
+export const getAllCourseFree = async (req, res) => {
+  try {
+    const { plan, title, limit = 10, page = 1 } = req.body;
+
+    let query = {};
+    let skip = (page - 1) * limit;
+
+    if (plan) {
+      query.plan = plan;
+    }
+
+    if (title) {
+      query.title = title;
+    }
+
+    const courses = await Course.find(query)
+      .populate({
+        path: "modules",
+        select: "title moduleNo"
+      })
+      .skip(skip)
+      .limit(limit);
+
+    return res.status(200).json({
+      success: true,
+      message: "Courses fetched successfully",
+      data: courses,
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: "Failed to fetch free courses",
+    });
+  }
+};
+
+
+// SINGLE COURSE (FREE)
+export const getCourseFree = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    const course = await Course.findById(courseId)
+      .populate({
+        path: "modules",
+        select: "title moduleNo videoLinks"
+      });
+
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Course fetched successfully",
+      data: course
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: "Error fetching course"
+    });
+  }
+};

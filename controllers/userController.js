@@ -100,52 +100,77 @@ export const getAllUser = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const {photoURL, name, gender, className, institute, address } = req.body;
     const userId = req.user._id;
 
-    // Validate the input
-    if (!name) {
+    // Build dynamic update object
+    const allowedFields = [
+      "name",
+      "photoURL",
+      "gender",
+      "className",
+      "institute",
+      "address",
+      "fatherName",
+      "motherName",
+      "dateOfBirth",
+      "nationalIdOrBirthCert",
+      "permanentAddress",
+      "educationQualification",
+      "hasComputer",
+      "trainingFields",
+      "skills",
+      "previousTraining",
+      "marketplaceExperience",
+      "nationalIdFile",
+      "educationCertificateFile",
+      "trainingCertificates",
+      "comment",
+    ];
+
+    const updateData = {};
+
+    // Only include fields that exist in req.body
+    for (const field of allowedFields) {
+      if (req.body[field] !== undefined) {
+        updateData[field] = req.body[field];
+      }
+    }
+
+    // Validate name if user wants to change it
+    if (updateData.name && updateData.name.trim() === "") {
       return res.status(400).json({
         success: false,
-        message: "Name is required"
+        message: "Name cannot be empty",
       });
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      {
-        name,
-        gender,
-        className,
-        institute,
-        address,
-        photoURL
-      },
-      { new: true, runValidators: true }
-    ).select('-password');
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+      runValidators: true,
+    }).select("-password");
 
     if (!updatedUser) {
       return res.status(404).json({
         success: false,
-        message: "User not found"
+        message: "User not found",
       });
     }
 
     return res.status(200).json({
       success: true,
       message: "Profile updated successfully",
-      data: updatedUser
+      data: updatedUser,
     });
-
   } catch (error) {
     console.error("Update profile error:", error);
     return res.status(500).json({
       success: false,
       message: "Failed to update profile",
-      error: error.message
+      error: error.message,
     });
   }
 };
+
 
 export const getUserStats = async (req, res) => {
   try {
