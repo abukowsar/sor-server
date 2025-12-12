@@ -1,11 +1,18 @@
 import express from 'express';
 import auth from '../middleware/authMiddleware.js';
-import { createQuiz, submitQuiz, updateQuiz, deleteQuiz, getQuizByChapter, getQuizSubmission, getQuizById } from '../controllers/quizController.js';
+import { createQuiz, submitQuiz, updateQuiz, deleteQuiz, getQuizByChapter, getQuizSubmission, getQuizById, getQuizByModule } from '../controllers/quizController.js';
 
 const quizRouter = express.Router();
 
 // Admin only routes
 quizRouter.get('/get-quiz-by-chapter/:chapterId', auth('student', 'admin'), getQuizByChapter);
+quizRouter.get(
+  "/get-quiz-by-module/:moduleId",
+  auth("student", "admin"),
+  getQuizByModule
+);
+
+
 quizRouter.get('/get-submission/:submissionId', auth('student', 'admin'), getQuizSubmission);
 quizRouter.get('/get-quiz/:quizId', auth('student', 'admin'), getQuizById);
 

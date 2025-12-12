@@ -53,6 +53,57 @@ export const getQuizByChapter = async (req, res) => {
   }
 };
 
+
+export const getQuizByModule = async (req, res) => {
+  try {
+    const { moduleId } = req.params;
+
+    // Check if chapter exists
+    const chapter = await Module.findById(moduleId);
+    if (!chapter) {
+      return res.status(404).json({
+        success: false,
+        message: "Module not found",
+      });
+    }
+
+    // Find quiz associated with the chapter
+    const quiz = await Quiz.findOne({ moduleId });
+    if (!quiz) {
+      return res.status(404).json({
+        success: false,
+        message: "No quiz found for this Module",
+      });
+    }
+
+    // Check if user has already submitted this quiz
+    let submission = null;
+    if (req.user?._id) {
+      submission = await QuizSubmission.findOne({
+        userId: req.user._id,
+        quizId: quiz._id,
+      }).select("score passed createdAt");
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Quiz fetched successfully",
+      data: {
+        quiz,
+        userSubmission: submission,
+      },
+    });
+  } catch (error) {
+    console.error("Get quiz error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch quiz",
+      error: error.message,
+    });
+  }
+};
+
+
 export const getQuizSubmission = async (req, res) => {
   try {
     const { submissionId } = req.params;
