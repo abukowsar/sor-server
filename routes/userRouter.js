@@ -15,7 +15,7 @@ import {
   
   
 } from "../controllers/userController.js";
-import { getBookProgress, getUserReadingProgress, updateLastReadChapter, markChapterComplete } from "../controllers/bookController.js";
+import { getBookProgress, getUserReadingProgress, updateLastReadChapter, markChapterComplete, getCourseProgress } from "../controllers/bookController.js";
  
 
 const userRouter = express.Router();
@@ -28,6 +28,7 @@ userRouter.get("/get-user/:id"   , getUserByID)
 userRouter.get("/get-all" , getAllUser)
 
 userRouter.get('/book-progress/:bookId', auth('student', 'admin'), getBookProgress);
+userRouter.get('/course-progress/:courseId', auth('student', 'admin'), getCourseProgress);
 
 // Get all reading progress
 userRouter.get('/reading-progress', auth('student', 'admin'), getUserReadingProgress);

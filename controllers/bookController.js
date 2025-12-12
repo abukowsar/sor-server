@@ -547,6 +547,40 @@ export const getBookProgress = async (req, res) => {
   }
 };
 
+export const getCourseProgress = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const userId = req.user._id;
+
+    // Find or create progress
+    let courseProgress = await CourseProgress.findOne({ userId, courseId });
+
+    if (!courseProgress) {
+      courseProgress = new CourseProgress({
+        userId,
+        courseId,
+        completedModules: [],
+        lastModulesId: null
+      });
+      await courseProgress.save();
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Course progress retrieved successfully",
+      data: courseProgress
+    });
+  } catch (error) {
+    console.error("Get course progress error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to get course progress",
+      error: error.message
+    });
+  }
+};
+
+
 // Get user's reading progress across all books
 export const getUserReadingProgress = async (req, res) => {
   try {

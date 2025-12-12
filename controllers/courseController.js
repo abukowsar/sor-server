@@ -96,6 +96,65 @@ export const getAllCourse = async (req, res) => {
   }
 };
 
+ 
+export const getCourseById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log("Course Id:", id);
+
+    const course = await Course.findById(id);
+
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found",
+      });
+    }
+
+    // If user is admin → return full access
+    if (req.user.role === "admin") {
+      return res.status(200).json({
+        success: true,
+        message: "Course details fetched successfully",
+        data: course,
+      });
+    }
+
+    // Get logged in user
+    const user = await User.findById(req.user._id);
+
+    const userPlan = user?.subscription?.plan || "free";
+
+    // Set which plans can access which courses
+    const planAccess = {
+      basic: ["basic"],
+      standard: ["basic", "standard"],
+      premium: ["basic", "standard", "premium"],
+    };
+
+    // If user does NOT have access based on plan
+    if (!planAccess[userPlan]?.includes(course.plan)) {
+      return res.status(403).json({
+        success: false,
+        message: "You don't have access to this course",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Course details fetched successfully",
+      data: course,
+    });
+
+  } catch (error) {
+    console.error("Error fetching course by ID:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch course details",
+    });
+  }
+};
+
 
 
 //update 
@@ -223,6 +282,9 @@ export const addModule = async (req, res) => {
 export const getModule = async (req, res) => {
   try {
     const { courseId } = req.params;
+    console.log("id" , courseId
+      
+    )
 
     // Check if course exists
     const course = await Course.findById(courseId);
@@ -348,6 +410,88 @@ export const getCourseFree = async (req, res) => {
     return res.status(400).json({
       success: false,
       message: "Error fetching course"
+    });
+  }
+};
+
+ 
+
+
+export const deleteModule = async (req, res) => {
+  const { moduleId } = req.params;
+
+  try {
+    // Delete the module
+    const deletedModule = await Module.findByIdAndDelete(moduleId);
+
+    if (!deletedModule) {
+      return res.status(400).json({
+        success: false,
+        message: "Module not found"
+      });
+    }
+
+    const courseId = deletedModule.courseId;
+
+    // Remove quiz linked to module
+    if (deletedModule.quizId) {
+      await Quiz.findOneAndDelete({ _id: deletedModule.quizId });
+    }
+
+    // Remove module reference from Course.modules
+    await Course.findByIdAndUpdate(
+      courseId,
+      { $pull: { modules: moduleId } }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Module deleted successfully"
+    });
+
+  } catch (error) {
+    console.error("Delete module error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete module",
+      error: error.message
+    });
+  }
+};
+
+
+export const updateModule = async (req, res) => {
+  const moduleId = req.params.moduleId;
+  const { title, videoLinks, moduleNo } = req.body;
+
+  try {
+    const moduleData = await Module.findOne({ _id: moduleId });
+
+    if (!moduleData) {
+      return res.status(400).json({
+        success: false,
+        message: "Module not found",
+      });
+    }
+
+    // Update the module
+    const updatedModule = await Module.findByIdAndUpdate(
+      moduleId,
+      { title, videoLinks, moduleNo },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Module updated successfully",
+      data: updatedModule,
+    });
+  } catch (error) {
+    console.error("Update module error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update module",
+      error: error.message,
     });
   }
 };

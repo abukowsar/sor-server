@@ -1,6 +1,6 @@
 import express from 'express';
 import auth from '../middleware/authMiddleware.js';
-import { addCourse, addModule, deleteCourse, getAllCourse, getAllCourseFree, getCourseFree, getModule, updateCourse } from '../controllers/courseController.js';
+import { addCourse, addModule, deleteCourse, deleteModule, getAllCourse, getAllCourseFree, getCourseById, getCourseFree, getModule, updateCourse, updateModule } from '../controllers/courseController.js';
 
 
 const courseRoute = express.Router();
@@ -12,15 +12,22 @@ courseRoute.delete("/delete/:courseId" ,  auth("admin") ,  deleteCourse)
 courseRoute.get("/getAll" ,  auth('student', 'admin') , getAllCourse)
 
 
+courseRoute.get("/:id" ,  auth('student', 'admin') , getCourseById)
+
+
 
 courseRoute.post('/add-module', auth(  'admin'), addModule ) 
 
 //// chapter
 courseRoute.get('/get-module/:courseId' , auth('student', 'admin'),getModule ) 
 
-// bookRouter.patch('/update-chapter/:chapterId', auth('admin'), updateChapter);
 
-// bookRouter.delete('/delete-chapter/:chapterId', auth("admin") ,deleteChapter)
+
+courseRoute.patch("/update-module/:moduleId", auth("admin"), updateModule);
+
+courseRoute.delete("/delete-module/:moduleId", auth("admin"), deleteModule);
+
+
 
 
 
