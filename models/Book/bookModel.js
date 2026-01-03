@@ -13,7 +13,7 @@ const bookSchema = new mongoose.Schema({
   thumbnail: String,
   plan: { 
     type: String, 
-    enum: ["basic", "standard", "premium"],
+    enum: ["free", "basic", "standard", "premium"],
     required: true
   },
   chapters: [{ type: mongoose.Schema.Types.ObjectId, ref: "Chapter" }]  

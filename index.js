@@ -9,7 +9,8 @@ import planRouter from "./routes/subscriptionPlanRoutes.js";
 import quizRouter from "./routes/quizRoutes.js";
 import noticeRouter from "./routes/noticeRoutes.js";
 import olympiadRouter from "./routes/olympiadRoutes.js";
-import courseRoute from "./routes/courseoute.js";
+import 
+courseRoute from "./routes/courseoute.js";
 
 dotenv.config();
 

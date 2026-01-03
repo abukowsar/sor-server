@@ -5,6 +5,11 @@ import { addCourse, addModule, deleteCourse, deleteModule, getAllCourse, getAllC
 
 const courseRoute = express.Router();
 
+
+
+courseRoute.get("/getAllCourseFree", getAllCourseFree);
+courseRoute.get("/getCourseFree/:courseId", getCourseFree);
+
 courseRoute.post("/create" ,  auth("admin") ,  addCourse)
 courseRoute.put("/update" ,  auth("admin") ,  updateCourse)
 courseRoute.delete("/delete/:courseId" ,  auth("admin") ,  deleteCourse)
@@ -30,9 +35,6 @@ courseRoute.delete("/delete-module/:moduleId", auth("admin"), deleteModule);
 
 
 
-
-courseRoute.get("/getAllCourseFree", getAllCourseFree);
-courseRoute.get("/getCourseFree/:courseId", getCourseFree);
 
 
 

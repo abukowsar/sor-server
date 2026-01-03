@@ -122,9 +122,10 @@ export const getBookById = async (req, res) => {
     // For regular users, check plan access
     const userPlan = user.subscription.plan || "free";
     const planAccess = {
+      free: ["free"],
       basic: ["basic"],
       standard: ["basic", "standard"],
-      premium: ["basic", "standard", "premium"]
+      premium: ["basic", "standard", "premium"],
     };
 
     if (!planAccess[userPlan].includes(book.plan)) {

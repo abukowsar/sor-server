@@ -8,7 +8,7 @@ import { User } from "../models/User/userModel.js";
 
 export const addCourse = async (req, res) => {
   try {
-    const { title, description, image, tutor, plan } = req.body;
+    const { title, description, image, tutor, plan, outlinePdf } = req.body;
 
     if (!title || !description || !image || !tutor || !plan) {
       return res.status(400).json({ message: "All fields are required" });
@@ -21,6 +21,7 @@ export const addCourse = async (req, res) => {
       image,
       tutor,
       plan,
+      outlinePdf,
       createdBy: req.user._id
 
     });
@@ -127,6 +128,7 @@ export const getCourseById = async (req, res) => {
 
     // Set which plans can access which courses
     const planAccess = {
+      free: ["free"],
       basic: ["basic"],
       standard: ["basic", "standard"],
       premium: ["basic", "standard", "premium"],
@@ -161,7 +163,8 @@ export const getCourseById = async (req, res) => {
 
 export const updateCourse = async (req, res) => {
   try {
-    const { courseId, title, description, image, tutor, plan } = req.body;
+    const { courseId, title, description, image, tutor, plan, outlinePdf } =
+      req.body;
 
     if (!courseId) {
       return res.status(400).json({ message: " course id is required " });
@@ -170,7 +173,7 @@ export const updateCourse = async (req, res) => {
 
     const updatedCourse = await Course.findByIdAndUpdate(
       courseId,
-      { title, description, image, tutor, plan },
+      { title, description, image, tutor, plan, outlinePdf },
       { new: true }
     );
 

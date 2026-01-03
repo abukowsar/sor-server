@@ -54,25 +54,68 @@ export const getUserByID = async (req, res) => {
 
 export const getAllUser = async (req, res) => {
   try {
-    const { search, role, subscription, page = 1, limit = 10 } = req.query;
+    const {
+      search,
+      role,
+      subscription,
+      district,
+      page = 1,
+      limit = 10,
+    } = req.query;
     const skip = (page - 1) * limit;
     let query = {};
 
+    // Search by name and phone
     if (search) {
-      const searchRegex = new RegExp(search.trim(), "i");
-      query.$or = [
-        { name: searchRegex }
+      const searchTrim = search.trim();
+      const searchRegex = new RegExp(searchTrim, "i");
 
-      ];
+      // Check if search is a number for phone search
+      const isNumber = /^\d+$/.test(searchTrim);
+
+      query.$or = [{ name: searchRegex }];
+
+      // Add phone search only if the input is numeric
+      if (isNumber) {
+        query.$or.push({ phone: parseInt(searchTrim) });
+      }
     }
+
+    // Filter by district (checks both present and permanent address)
+    if (district) {
+      const districtRegex = new RegExp(district.trim(), "i");
+      query.$or = query.$or || [];
+
+      // If there's already a $or from search, we need to combine them properly
+      if (query.$or.length > 0) {
+        query.$and = [
+          { $or: [...query.$or] },
+          {
+            $or: [
+              { "address.district": districtRegex },
+              { "permanentAddress.district": districtRegex },
+            ],
+          },
+        ];
+        delete query.$or;
+      } else {
+        query.$or = [
+          { "address.district": districtRegex },
+          { "permanentAddress.district": districtRegex },
+        ];
+      }
+    }
+
     if (subscription) {
-      query.subscription = subscription;
+      query["subscription.plan"] = subscription;
     }
+
     if (role) {
       query.role = role;
     }
 
-    const users = await User.find(query).skip(skip)
+    const users = await User.find(query)
+      .skip(skip)
       .limit(parseInt(limit))
       .sort({ createdAt: -1 });
 
@@ -82,20 +125,14 @@ export const getAllUser = async (req, res) => {
       users,
       totalPages: Math.ceil(total / limit),
       currentPage: parseInt(page),
-      totalData: total
-
-
-    })
-
-
+      totalData: total,
+    });
   } catch (error) {
     res.status(500).json({
       status: false,
-      message: error.message
-    })
+      message: error.message,
+    });
   }
-
-
 };
 
 export const updateProfile = async (req, res) => {
@@ -106,6 +143,7 @@ export const updateProfile = async (req, res) => {
     const allowedFields = [
       "name",
       "photoURL",
+      "email",
       "gender",
       "className",
       "institute",
