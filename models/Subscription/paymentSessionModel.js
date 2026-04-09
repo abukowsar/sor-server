@@ -31,7 +31,8 @@ const paymentSessionSchema = new mongoose.Schema({
   },
   gatewayPageURL: {
     type: String,
-    required: true
+    required: false,
+    default: ''
   }
 }, { timestamps: true });
 

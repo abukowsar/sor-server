@@ -6,17 +6,21 @@ import {
   getAllPlans,
   getAPlan,
   updatePlan,
-  createSslPayment,
+  createShurjoPayment,
   paymentSuccess,
-  getTransactionById
+  paymentStatusUpdate,
+  getTransactionById,
+  verifyPaymentAndGetTransaction
 } from '../controllers/subscriptionPlanController.js';
 import { urlEncoderMiddleware } from '../middleware/urlEncoderMiddleware.js';
 
 const router = express.Router();
 
 // Payment routes should come before dynamic routes
-router.post("/create-ssl-payment", auth("student"), createSslPayment);
+router.post("/create-ssl-payment", auth("student"), createShurjoPayment);
 router.post("/success-payment", urlEncoderMiddleware, paymentSuccess);
+router.post("/payment-status-update", paymentStatusUpdate); // IPN endpoint
+router.get("/verify-payment", auth("student", "admin"), verifyPaymentAndGetTransaction); // Verify payment and get transaction
 router.get('/transaction/:transactionId', auth('student', 'admin'), getTransactionById);
 
 // Admin routes
