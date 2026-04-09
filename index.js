@@ -35,7 +35,7 @@ app.use("/api/olympiad", olympiadRouter)
 
 
 app.get("/", async (req, res) => {
-	res.send("Welcome to the new server!");
+	res.send("Welcome to the  server!");
 });
 
 app.listen(port, () => console.log("My server is running on port:", port));
