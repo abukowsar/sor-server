@@ -9,7 +9,8 @@ import { createRequire } from "module";
 // Use createRequire to import CommonJS module in ES module context
 const require = createRequire(import.meta.url);
 const shurjopay = require("shurjopay");
-
+import dotenv from "dotenv";
+dotenv.config();
 // Initialize ShurjoPay instance
 const sp = shurjopay();
 
