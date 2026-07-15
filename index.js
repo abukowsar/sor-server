@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/mongodb.js";
-import authRouter from "./routes/authRouter.js";
 import bookRouter from "./routes/bookRoutes.js";
 import userRouter from "./routes/userRouter.js";
 import planRouter from "./routes/subscriptionPlanRoutes.js";
@@ -12,6 +11,7 @@ import olympiadRouter from "./routes/olympiadRoutes.js";
 import 
 courseRoute from "./routes/courseoute.js";
 import { seedUsers } from "./utils/seed.js";
+import authRouter from "./routes/Authroute.js";
 
 dotenv.config();
 
