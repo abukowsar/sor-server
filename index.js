@@ -11,6 +11,7 @@ import noticeRouter from "./routes/noticeRoutes.js";
 import olympiadRouter from "./routes/olympiadRoutes.js";
 import 
 courseRoute from "./routes/courseoute.js";
+import { seedUsers } from "./utils/seed.js";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(cors({ origin: "*" }));
 app.use(express.json()); 
 
 connectDB()
+// seedUsers()
 
 app.use("/api/user" , userRouter)
 app.use("/api/auth", authRouter);
