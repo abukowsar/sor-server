@@ -25,6 +25,21 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "User with this phone number already exists" });
     }
 
+     // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create verified user
+    const newUser = new User({
+      name,
+      phone,
+      password: hashedPassword,
+      role: "student",
+      isVerified: true
+    });
+
+    await newUser.save();
+
     // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000);
     const message = `Your verification code is: ${otp} -School of Robotics  `;

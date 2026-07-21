@@ -1,3 +1,4 @@
 {
-  "workbench.colorTheme": "Learn with Sumit - Party"
+  "workbench.colorTheme": "Learn with Sumit - Party",
+  "files.autoSave": "afterDelay"
 }
