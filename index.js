@@ -22,6 +22,8 @@ const port = process.env.PORT || 7000;
 app.use(cors({ origin: "*" }));
 app.use(express.json()); 
 
+
+
 // seedUsers() 
 connectDB()  
 
